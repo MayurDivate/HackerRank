@@ -9,11 +9,14 @@ def sherlockAndAnagrams(s):
     # words are keys and their counts in the string are values
 
     anagramS = getOverlappingSubstrings(s)
-
+    print(anagramS)
     for k in anagramS.keys():
         if anagramS[k] > 1:
-            res += 1
-
+            #print(k, anagramS[k])
+            if len(k) == 1 and anagramS[k] == 2:
+                res = res + 1
+            else:
+                res += anagramS[k]
     return res
 
 
@@ -27,12 +30,13 @@ def getOverlappingSubstrings(s):
         for j in range(i, len(s)):
             sub_string = s[i:j+1]
             anagramS = ''.join(sorted(sub_string))
-
+            #print(i, sub_string, '==>' ,anagramS)
             if anagramS in dictx.keys():
-                dictx[anagramS] += dictx[anagramS]
-
+                dictx[anagramS] = dictx[anagramS] + 1
             else:
                 dictx[anagramS] = 1
+
+            #print(anagramS, ':', dictx[anagramS])
 
 
     return dictx
@@ -41,6 +45,10 @@ def getOverlappingSubstrings(s):
 
 
 
-s = 'abba'
-#s = 'abcd'
+#s = 'abba'         # 4
+#s = 'ifailuhkqq'   # 3
+#s = 'abcd'         # 0
+#s = 'cdcd'          # 5
+s = 'kkkk' # 10
+
 print(sherlockAndAnagrams(s))
