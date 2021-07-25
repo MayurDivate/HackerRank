@@ -1,19 +1,20 @@
 
 def sherlockAndAnagrams(s):
 
-    i = 0
+    res = 0
 
     # create dict of words
     # words are created from overlapping substrings
     # characters in the words are sorted before making it key
     # words are keys and their counts in the string are values
+
     anagramS = getOverlappingSubstrings(s)
 
     for k in anagramS.keys():
         if anagramS[k] > 1:
-            i += 1
+            res += 1
 
-    return i
+    return res
 
 
 
@@ -41,4 +42,5 @@ def getOverlappingSubstrings(s):
 
 
 s = 'abba'
-sherlockAndAnagrams(s)
+#s = 'abcd'
+print(sherlockAndAnagrams(s))
