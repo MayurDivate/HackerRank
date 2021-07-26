@@ -10,7 +10,7 @@ def countTriplets(arr, r):
         if len(set(triplet) - num_counts.keys()) == 0:
             res +=  max([num_counts.get(x) for x in triplet])
 
-    print(res)
+    return res
 
 
 def getNumCounts(arr):
@@ -27,7 +27,14 @@ r = 2
 
 arr = [1, 3, 9, 9, 27, 81]
 r = 3
-"""
+
 arr = [1, 5 ,5 ,25 ,125]
 r = 5
-countTriplets(arr, r)
+"""
+
+
+#input_06 expected output = 2325652489
+r = 3
+with open('input06.txt') as f:
+    arr = f.readline().split(' ')
+    print(countTriplets(arr, r))
