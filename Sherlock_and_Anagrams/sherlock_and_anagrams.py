@@ -13,10 +13,6 @@ def sherlockAndAnagrams(s):
     for k in anagramS.keys():
         # pairs =  half of (wordcount - 1 * wordcount)
         res += ((anagramS[k] - 1) * anagramS[k]) // 2
-        #print(anagramS[k])
-        res += (anagramS[k]-1) * anagramS[k] // 2
-        #print(anagramS[k])
-        res += (anagramS[k]-1) * anagramS[k] // 2
 
     return res
 
