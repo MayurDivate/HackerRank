@@ -67,7 +67,6 @@ For the second query of type 3, there are two integers in  array = [6, 10,10, 6]
 
 **Sample Input 1**
 ```
-4
 3 4
 2 1003
 1 16
@@ -82,7 +81,6 @@ For the second query of type 3, there are two integers in  array = [6, 10,10, 6]
 
 **Sample Input 2**
 ```
-10
 1 3
 2 3
 3 2
