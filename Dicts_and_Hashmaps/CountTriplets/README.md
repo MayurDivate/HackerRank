@@ -7,6 +7,7 @@ arr = [1,4,16,64] = 4
 There are [1,4,16] and [4, 16, 64] at indices [0, 1, 2] and [1,2,3]. Return 2.
 
 **Function Description**
+
 Complete the countTriplets function.
 countTriplets has the following parameter(s):
 - int arr[n]: an array of integers
