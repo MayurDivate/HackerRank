@@ -11,13 +11,10 @@ def sherlockAndAnagrams(s):
     anagramS = getOverlappingSubstrings(s)
     #print(anagramS)
     for k in anagramS.keys():
-<<<<<<< HEAD
         # pairs =  half of (wordcount - 1 * wordcount)
         res += ((anagramS[k] - 1) * anagramS[k]) // 2
-=======
         #print(anagramS[k])
         res += (anagramS[k]-1) * anagramS[k] // 2
->>>>>>> main
 
     return res
 
