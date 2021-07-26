@@ -11,8 +11,13 @@ def sherlockAndAnagrams(s):
     anagramS = getOverlappingSubstrings(s)
     #print(anagramS)
     for k in anagramS.keys():
+<<<<<<< HEAD
         # pairs =  half of (wordcount - 1 * wordcount)
         res += ((anagramS[k] - 1) * anagramS[k]) // 2
+=======
+        #print(anagramS[k])
+        res += (anagramS[k]-1) * anagramS[k] // 2
+>>>>>>> main
 
     return res
 
@@ -23,16 +28,13 @@ def getOverlappingSubstrings(s):
 
     dictx = {}
 
-    for i in range(len(s)):
-        for j in range(i, len(s)):
-            sub_string = s[i:j+1]
+    for ssLen in range(len(s)):
+        for ssStart in range(len(s) - ssLen):
+            sub_string = s[ssStart:ssStart + ssLen + 1]
             anagramS = ''.join(sorted(sub_string))
-            #print(i, sub_string, '==>' ,anagramS)
-            if anagramS in dictx.keys():
-                dictx[anagramS] = dictx[anagramS] + 1
-            else:
-                dictx[anagramS] = 1
 
+            # if anagramS present then +1 else 0
+            dictx[anagramS] = dictx.get(anagramS, 0) + 1
             #print(anagramS, ':', dictx[anagramS])
 
 
