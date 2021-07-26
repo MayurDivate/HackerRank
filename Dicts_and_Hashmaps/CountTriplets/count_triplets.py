@@ -1,3 +1,4 @@
+# solution 1
 def countTriplets(arr, r):
     count = 0
     dict_freq = {}
@@ -13,6 +14,8 @@ def countTriplets(arr, r):
     print('Hacker',count)
     print(dict_pairs)
     return count
+
+# solution 2
 
 def countTripletsX(arr, r):
     res = 0
@@ -36,14 +39,6 @@ def countTripletsX(arr, r):
     print('Solved',res)
     return res
 
-
-def getNumCounts(arr):
-
-    dictX = {}
-    for i,n in enumerate(arr):
-        dictX[n] = dictX.get(n, 0) + 1
-
-    return dictX
 
 
 #--------- test data
