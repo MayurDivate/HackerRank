@@ -8,3 +8,15 @@ Given an array of integers, sort the array in ascending order using the Bubble S
 - Array is sorted in numSwaps swaps., 
 - First Element and Last Element: in the sorted array.
 
+**Constraints**
+- 1 < n < 601
+- 0 < a[i] <= 2 x 10^6
+  
+###### -----------------------------------------------
+
+#### maximum toys problem 
+**Constraints**
+- 0 < n <= 10^5
+- 0 < k <= 10^9
+- 0 < prices[i] <= 10^9
+  
