@@ -15,7 +15,7 @@ The budget is  units of currency. He can buy items that cost (1,2,3) for 6, or (
 def maximumToys(prices, k):
     toys = 0
 
-    for toyPrice in bubbleSort(prices):
+    for toyPrice in sorted(prices):
         if (k - toyPrice) < 0:
             return toys
         else:
@@ -24,7 +24,7 @@ def maximumToys(prices, k):
 
     return toys
 
-
+# time limit exceeds when bubble sort used
 def bubbleSort(arr):
     for i in range(len(arr)):
         isSorted = True
