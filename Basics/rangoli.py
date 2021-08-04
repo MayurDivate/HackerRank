@@ -8,6 +8,7 @@ def print_rangoli(size):
 
     for i in range(size):
         block = "-".join(letters_required[:i:-1] + letters_required[i::])
+        # built in function center takes string and put it in middle of string of size n flanked by given character
         block = (block).center(size_of_line,'-')
         building_blocks.append(block)
 
@@ -18,12 +19,9 @@ def print_rangoli(size):
 
 
 
-
-
-#if __name__ == '__main__':
-#    n = int(input())
-
-print_rangoli(5)
+if __name__ == '__main__':
+    n = int(input())
+    print_rangoli(n)
 
 
 # old code
