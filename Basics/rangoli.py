@@ -10,23 +10,30 @@ def print_rangoli(size):
 
 
     for i in range(1, int(mid_point)+1):
-        print()
+        if i != 1:
+            print()
 
         next_letter = size-1
         for j in range(1, side+1):
            if ((j % 2) != 0) and (j >= start_point) and (j <= end_point):
                #print(abs(next_letter), end='')
                print(chr(ord('a')+abs(next_letter)), end='')
-               next_letter -= 1
+               if j < mid_point:
+                   next_letter -= 1
+               else:
+                   next_letter += 1
 
            else:
                print('-', end='')
+
         if i < (mid_point/ 2):
             start_point -= 2
             end_point += 2
         else:
             start_point += 2
             end_point -= 2
+
+
 
 if __name__ == '__main__':
     n = int(input())
