@@ -6,16 +6,18 @@ def freqQuery(queries):
     res = []
 
     for action, element in queries:
-
+        # if element exist then perform insert / delete action
         if (action in [1, 2]) and (element in data.keys()):
             if action == 1:
                 data[element] += 1
             elif action == 2:
                 data[element] -= 1
 
+        # or insert new element
         elif action == 1:
             data[element] = 1
 
+        # or print if element with same frequency exists
         elif action == 3:
             if element in set(data.values()):
                 res.append(1)
