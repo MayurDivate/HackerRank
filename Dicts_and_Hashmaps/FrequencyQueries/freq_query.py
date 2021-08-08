@@ -17,10 +17,15 @@ def freqQuery(queries):
 
         # print if element with same frequency exists
         elif action == 3:
-            if element in set(freq_dict.values()):
+            if element > 10000:
+                res.append(0)
+                #print(0)
+            elif element in set(freq_dict.values()):
                 res.append(1)
+                #print(1)
             else:
                 res.append(0)
+                #print(0)
 
     return res
 
