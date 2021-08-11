@@ -14,8 +14,9 @@ class CrossWordPuzzel:
 
     def fill_vertical(self, word):
         # fill words vertically without interruption
-        for i, letter in enumerate(word):
-            self.crossword[i] = re.sub(r'-',letter, self.crossword[i],1)
+        self.flip_crossword()
+        self.fill_horizontal_sub(word)
+        self.flip_crossword()
 
     def flip_crossword(self):
         grid = []
@@ -54,7 +55,14 @@ class CrossWordPuzzel:
 
     def fill_horizontal_sub(self, word):
         for i, row in enumerate(self.crossword):
-            if re.search(r'\-+\w\-+', row):
+            regx =  '\-{'+str(len(word))+'}'
+            if re.search(regx, row):
+                m = re.search(regx, row).group()
+                if len(m) == len(word):
+                    self.crossword[i] = re.sub(regx, word, row)
+                    return True
+
+            elif re.search(r'\-+\w\-+', row):
                 m = re.search(r'(\-+)(\w+)(\-+)', row).groups()
                 start = len(m[0])
                 end = start + len(m[1])
@@ -63,6 +71,7 @@ class CrossWordPuzzel:
 
                 if (wordx == m[1]) and (re.match(regx, word)):
                     self.crossword[i] = re.sub(r'\-+\w\-+', word, row)
+                    return True
 
             elif re.search(r'\-+\w+', row):
 
@@ -75,8 +84,7 @@ class CrossWordPuzzel:
 
             elif re.search(r'\w+\-+', row):
                 substr = re.search(r'(\w+)(\-+)', row).groups()
-                word = word.replace(substr[0], '')
-
+                word = re.sub(substr[0], '',word, 1)
                 if len(substr[1]) == len(word):
                     self.crossword[i] = re.sub(r'\-+', word, row)
                     return True
@@ -100,26 +108,23 @@ class CrossWordPuzzel:
                     old_word = word
 
             else:
-
                 self.fill_word(word)
                 old_word = word
 
-        print(*self.crossword, sep='\n')
+        return self.crossword
 
 
-grid = ['+-++++++++',
-        '+-++++++++',
-        '+-++++++++',
-        '+-----++++',
-        '+-+++-++++',
-        '+-+++-++++',
-        '+++++-++++',
-        '++------++',
-        '+++++-++++',
-        '+++++-++++']
-answers = 'LONDON;DELHI;ICELAND;ANKARA'.split(';')
+#grid = ['+-++++++++',  '+-++++++++', '+-++++++++', '+-----++++', '+-+++-++++', '+-+++-++++', '+++++-++++', '++------++', '+++++-++++', '+++++-++++']
+#answers = 'LONDON;DELHI;ICELAND;ANKARA'
 
-cw = CrossWordPuzzel(grid, answers)
-cw.fillCrosswordPuzzle()
+#grid = ['++++++-+++', '++------++', '++++++-+++', '++++++-+++', '+++------+', '++++++-+-+', '++++++-+-+', '++++++++-+', '++++++++-+', '++++++++-+']
+#answers = 'ICELAND;MEXICO;PANAMA;ALMATY'
 
+grid = ['+-++++++++', '+-++++++++', '+-------++', '+-++++++++', '+-++++++++', '+------+++', '+-+++-++++', '+++++-++++', '+++++-++++', '++++++++++']
+answers = 'AGRA;NORWAY;ENGLAND;GWALIOR'
+
+
+cw = CrossWordPuzzel(grid, answers.split(';'))
+out = cw.fillCrosswordPuzzle()
+print(*out,sep='\n')
 #fill_word(['+-----++++'], 'mayur')
