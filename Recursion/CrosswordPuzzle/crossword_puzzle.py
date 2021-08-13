@@ -15,51 +15,46 @@ class CrossWord:
         if self.isHorizontal:
             return 'Hz: '+self.value+' in row '+ str(self.pos)+' from '+ str(self.start)+' to '+str(self.end)
         else:
-            return 'Vr: '+self.value +' in row '+str(self.pos)+' from '+str(self.start)+ ' to '+str(self.end)
+            return 'Vr: '+self.value +' in col '+str(self.pos)+' from '+str(self.start)+ ' to '+str(self.end)
 
+    def __hash__(self):
+        return hash(self.toString())
 
 class CrossWordGrid(CrossWord):
 
-    def print_me(self):
-        print(self.value, self.col, self.row)
+    def isOverlapping(self, grid2):
 
+        if self.isHorizontal != grid2.isHorizontal:
+            if (self.pos >= grid2.start) and (self.pos <= grid2.end):
+                if (self.start <= grid2.pos) and (self.end >= grid2.pos):
+                    return True
 
-class CrossWordAnswer(CrossWord):
-
-    def test(self):
-        pass
+        return False
 
 
 class CrossWordPuzzel():
 
-    def __init__(self, grid, answers):
-        self.grid = grid
-        self.answers = answers
-        self.crossWordGrid = self.getCrossWordGrid()
+    def __init__(self, crossWordGrids, answers):
+        self.crossWordGrids = crossWordGrids
+        self.solution = {ans: [] for ans in answers}
 
-    def getCrossWordGrid(self):
-
-        crossWordGrids = {}
-
-        for i, row in enumerate(self.grid):
-            col = ''.join([self.grid[j][i] for j in range(len(self.grid))])
-
-            re_matches = re.finditer(r'\-\-+', row)
-            for match in re_matches:
-                crossWordGrids[(CrossWordGrid(match.group(), i, match.span()[0], match.span()[1], True))] = []
-
-            re_matches = re.finditer(r'\-\-+', col)
-            for match in re_matches:
-                crossWordGrids[(CrossWordGrid(match.group(), i, match.span()[0], match.span()[1], False))] = []
-
-        return crossWordGrids
 
     def fill_answers(self):
-        for word in self.answers:
-            for g in self.crossWordGrid.keys():
+        for word in self.solution.keys():
+            for g in self.crossWordGrids:
                 if len(word) == len(g.value):
-                    self.crossWordGrid[g].append(word)
-                    print(g.toString(), self.crossWordGrid[g])
+                    self.solution[word].append(g)
+
+    def print_solution(self):
+        for word in self.solution.keys():
+            for grid in self.solution[word]:
+                print(word, grid.toString())
+
+    def test(self):
+        for g in self.crossWordGrids:
+            for g2 in self.crossWordGrids:
+                if g != g2:
+                    print(g.toString() , g.isOverlapping(g2), g2.toString(), sep='\t')
 
 #grid = ['+-++++++++',  '+-++++++++', '+-++++++++', '+-----++++', '+-+++-++++', '+-+++-++++', '+++++-++++', '++------++', '+++++-++++', '+++++-++++']
 #answers = 'LONDON;DELHI;ICELAND;ANKARA'
@@ -70,12 +65,29 @@ class CrossWordPuzzel():
 grid = ['+-++++++++', '+-++++++++', '+-------++', '+-++++++++', '+-++++++++', '+------+++', '+-+++-++++', '+++++-++++', '+++++-++++', '++++++++++']
 answers = 'AGRA;NORWAY;ENGLAND;GWALIOR'
 
-cwf = CrossWordPuzzel(grid, answers.split(';'))
 
-cwf.fill_answers()
+def crossWordPuzzel(grind, answers):
+    crossWordGrids = []
+
+    for i, row in enumerate(grid):
+        col = ''.join([grid[j][i] for j in range(len(grid))])
+
+        re_matches = re.finditer(r'\-\-+', row)
+        for match in re_matches:
+            crossWordGrids.append((CrossWordGrid(match.group(), i, match.span()[0], match.span()[1], True)))
+
+        re_matches = re.finditer(r'\-\-+', col)
+        for match in re_matches:
+            crossWordGrids.append((CrossWordGrid(match.group(), i, match.span()[0], match.span()[1], False)))
+
+    return CrossWordPuzzel(crossWordGrids, answers)
 
 
-#cw = CrossWordPuzzel(grid, answers.split(';'))
-#out = cw.fillCrosswordPuzzle()
-#print(*out,sep='\n')
-#fill_word(['+-----++++'], 'mayur')
+cwp = crossWordPuzzel(grid, answers.split(';'))
+
+cwp.fill_answers()
+
+cwp.print_solution()
+cwp.test()
+
+
