@@ -20,6 +20,7 @@ class CrossWord:
     def __hash__(self):
         return hash(self.toString())
 
+
 class CrossWordGrid(CrossWord):
 
     def isOverlapping(self, grid2):
@@ -34,27 +35,57 @@ class CrossWordGrid(CrossWord):
 
 class CrossWordPuzzel():
 
-    def __init__(self, crossWordGrids, answers):
+    def __init__(self, matrix, crossWordGrids, answers):
+        self.matrix = matrix
         self.crossWordGrids = crossWordGrids
         self.solution = {ans: [] for ans in answers}
 
-
-    def fill_answers(self):
+    def get_possible_answers(self):
         for word in self.solution.keys():
             for g in self.crossWordGrids:
                 if len(word) == len(g.value):
                     self.solution[word].append(g)
+
+    def updateGrid(self):
+        # update positions with only one possible answer
+
+        for ans in self.solution.keys():
+            if len(self.solution[ans]) == 1:
+                for g in self.solution[ans]:
+                    assert isinstance(g, CrossWordGrid)
+
+                    if g.isHorizontal:
+                        self.fill_horizontal(ans, g)
+                    else:
+                        print(g.value, 'col', ans, g.pos, 'from',g.start, 'end', g.end )
+                        self.fill_vertical(ans, g)
+            
+    def fill_horizontal(self, word, grid):
+
+        assert isinstance(grid, CrossWordGrid)
+
+        gx = self.matrix[grid.pos]
+        gx = gx[:grid.start]+word+gx[grid.end:]
+        self.matrix[grid.pos] = gx
+
+    def fill_vertical(self, word, grid):
+
+        assert isinstance(grid, CrossWordGrid)
+
+        for row in range(grid.start, grid.end):
+            gx = self.matrix[row]
+            gx = gx[:grid.pos] + word[len(word) - row] + gx[ grid.pos+1 :]
+            self.matrix[row] = gx
+
 
     def print_solution(self):
         for word in self.solution.keys():
             for grid in self.solution[word]:
                 print(word, grid.toString())
 
-    def test(self):
-        for g in self.crossWordGrids:
-            for g2 in self.crossWordGrids:
-                if g != g2:
-                    print(g.toString() , g.isOverlapping(g2), g2.toString(), sep='\t')
+
+    def print_matrix(self):
+        print(*self.matrix, sep='\n')
 
 #grid = ['+-++++++++',  '+-++++++++', '+-++++++++', '+-----++++', '+-+++-++++', '+-+++-++++', '+++++-++++', '++------++', '+++++-++++', '+++++-++++']
 #answers = 'LONDON;DELHI;ICELAND;ANKARA'
@@ -66,7 +97,7 @@ grid = ['+-++++++++', '+-++++++++', '+-------++', '+-++++++++', '+-++++++++', '+
 answers = 'AGRA;NORWAY;ENGLAND;GWALIOR'
 
 
-def crossWordPuzzel(grind, answers):
+def crossWordPuzzel(grid, answers):
     crossWordGrids = []
 
     for i, row in enumerate(grid):
@@ -80,14 +111,13 @@ def crossWordPuzzel(grind, answers):
         for match in re_matches:
             crossWordGrids.append((CrossWordGrid(match.group(), i, match.span()[0], match.span()[1], False)))
 
-    return CrossWordPuzzel(crossWordGrids, answers)
+    return CrossWordPuzzel(grid,crossWordGrids, answers)
 
 
 cwp = crossWordPuzzel(grid, answers.split(';'))
-
-cwp.fill_answers()
-
+cwp.get_possible_answers()
 cwp.print_solution()
-cwp.test()
+cwp.updateGrid()
+cwp.print_matrix()
 
 
