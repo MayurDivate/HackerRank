@@ -1,118 +1,65 @@
 import re
 
-class CrossWordPuzzel:
 
-    def __init__(self, crossword, words):
-        self.crossword = crossword
-        self.words = words
+class CrossWord:
 
-    def is_overlap(self, new_word, old_word):
-        # check if there was orverlap with previous word
-        if len(set(old_word) - set(new_word)) < len(old_word):
-            return True
-        return False
+    def __init__(self, value, pos, start, end, isHorizontal):
+        self.value = value
+        self.pos = pos
+        self.start = start
+        self.end = end
+        self.isHorizontal = isHorizontal
 
-    def fill_vertical(self, word):
-        # fill words vertically without interruption
-        self.flip_crossword()
-        self.fill_horizontal_sub(word)
-        self.flip_crossword()
+    def toString(self):
 
-    def flip_crossword(self):
-        grid = []
-        for i in range(10):
-            g = []
-            for j in range(10):
-                g.append(self.crossword[j][i])
-            grid.append(''.join(g))
+        if self.isHorizontal:
+            return 'Hz: '+self.value+' in row '+ str(self.pos)+' from '+ str(self.start)+' to '+str(self.end)
+        else:
+            return 'Vr: '+self.value +' in row '+str(self.pos)+' from '+str(self.start)+ ' to '+str(self.end)
 
-        self.crossword = grid
 
-    def fill_vertical_sub(self, word):
-        self.flip_crossword()
-        self.fill_horizontal_sub(word)
-        self.flip_crossword()
+class CrossWordGrid(CrossWord):
 
-    def fill_word(self, word):
-        word_len = len(word)
+    def print_me(self):
+        print(self.value, self.col, self.row)
 
-        # grow through each row of grid
-        for i, row in enumerate(self.crossword):
 
-            # if grid contains blank space and
-            # it is less than size of word then
-            # fill it vertically
+class CrossWordAnswer(CrossWord):
 
-            if re.search(r'\-+', row):
-                blank_space = re.search(r'\-+', row).span()
-                blank_space = blank_space[1] - blank_space[0]
-                if blank_space == word_len:
-                    self.crossword[i] = re.sub(r'\-+', word, row)
-                    return self.crossword
-                else:
-                    self.fill_vertical(word)
-                    return self.crossword
+    def test(self):
+        pass
 
-    def fill_horizontal_sub(self, word):
-        for i, row in enumerate(self.crossword):
-            regx =  '\-{'+str(len(word))+'}'
-            if re.search(regx, row):
-                m = re.search(regx, row).group()
-                if len(m) == len(word):
-                    self.crossword[i] = re.sub(regx, word, row)
-                    return True
 
-            elif re.search(r'\-+\w\-+', row):
-                m = re.search(r'(\-+)(\w+)(\-+)', row).groups()
-                start = len(m[0])
-                end = start + len(m[1])
-                wordx = word[start:end]
-                regx = '\w{' + str(len(m[0])) + '}' + m[1] + '\w{' + str(len(m[2])) + '}$'
+class CrossWordPuzzel():
 
-                if (wordx == m[1]) and (re.match(regx, word)):
-                    self.crossword[i] = re.sub(r'\-+\w\-+', word, row)
-                    return True
+    def __init__(self, grid, answers):
+        self.grid = grid
+        self.answers = answers
+        self.crossWordGrid = self.getCrossWordGrid()
 
-            elif re.search(r'\-+\w+', row):
+    def getCrossWordGrid(self):
 
-                substr = re.search(r'(\-+)(\w+)', row).groups()
-                word = word.replace(substr[1], '')
+        crossWordGrids = {}
 
-                if len(substr[0]) == len(word):
-                    self.crossword[i] = re.sub(r'\-+', word, row)
-                    return True
+        for i, row in enumerate(self.grid):
+            col = ''.join([self.grid[j][i] for j in range(len(self.grid))])
 
-            elif re.search(r'\w+\-+', row):
-                substr = re.search(r'(\w+)(\-+)', row).groups()
-                word = re.sub(substr[0], '',word, 1)
-                if len(substr[1]) == len(word):
-                    self.crossword[i] = re.sub(r'\-+', word, row)
-                    return True
+            re_matches = re.finditer(r'\-\-+', row)
+            for match in re_matches:
+                crossWordGrids[(CrossWordGrid(match.group(), i, match.span()[0], match.span()[1], True))] = []
 
-        return False
+            re_matches = re.finditer(r'\-\-+', col)
+            for match in re_matches:
+                crossWordGrids[(CrossWordGrid(match.group(), i, match.span()[0], match.span()[1], False))] = []
 
-    def fillCrosswordPuzzle(self):
-        # set old not to nothing
-        old_word = ''
+        return crossWordGrids
 
-        # one word at time to fill
-        for word in self.words:
-            # if word is overlaps with previous then
-            # try both vertical or horizontal.
-            if self.is_overlap(word, old_word):
-
-                if self.fill_horizontal_sub(word):
-                    old_word = word
-                else:
-                    self.fill_vertical_sub(word)
-                    old_word = word
-
-            else:
-                self.fill_word(word)
-                old_word = word
-
-        return self.crossword
-
+    def fill_answers(self):
+        for word in self.answers:
+            for g in self.crossWordGrid.keys():
+                if len(word) == len(g.value):
+                    self.crossWordGrid[g].append(word)
+                    print(g.toString(), self.crossWordGrid[g])
 
 #grid = ['+-++++++++',  '+-++++++++', '+-++++++++', '+-----++++', '+-+++-++++', '+-+++-++++', '+++++-++++', '++------++', '+++++-++++', '+++++-++++']
 #answers = 'LONDON;DELHI;ICELAND;ANKARA'
@@ -123,8 +70,12 @@ class CrossWordPuzzel:
 grid = ['+-++++++++', '+-++++++++', '+-------++', '+-++++++++', '+-++++++++', '+------+++', '+-+++-++++', '+++++-++++', '+++++-++++', '++++++++++']
 answers = 'AGRA;NORWAY;ENGLAND;GWALIOR'
 
+cwf = CrossWordPuzzel(grid, answers.split(';'))
 
-cw = CrossWordPuzzel(grid, answers.split(';'))
-out = cw.fillCrosswordPuzzle()
-print(*out,sep='\n')
+cwf.fill_answers()
+
+
+#cw = CrossWordPuzzel(grid, answers.split(';'))
+#out = cw.fillCrosswordPuzzle()
+#print(*out,sep='\n')
 #fill_word(['+-----++++'], 'mayur')
