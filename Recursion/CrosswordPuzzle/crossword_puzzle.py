@@ -73,7 +73,7 @@ class CrossWordPuzzel():
                 self.crossWordGridDict[cwg] = possible_word
 
     def solve_puzzle(self, grid, word):
-        overlap_flag = False
+        overlap_flags = []
 
         # both should of equal sizes
         if len(word) == (grid.end - grid.start):
@@ -87,19 +87,27 @@ class CrossWordPuzzel():
                 # overlapping positiions should match
 
                 x, y = grid.get_overlapping_position(overlapping_grid)
-
                 if overlapping_grid.isFilled:
-                    if word[x] != overlapping_grid.value[y]:
-                        # overlapping positions did not match
-                        overlap_flag = False
+                    overlap_flags.append(word[x] == overlapping_grid.value[y])
 
+                else:
+                    for o_word in self.grid_to_words[overlapping_grid]:
+                        if o_word != word:
+                           if word[x] == o_word[y]:
+                               overlapping_grid.value = o_word
+                               overlapping_grid.isFilled = True
+                               self.crossWordGridDict[grid] = word
+                               overlap_flags.append(True)
+                           else:
+                               overlap_flags.append(False)
 
-        if overlap_flag:
+        if len(overlap_flags) == sum(overlap_flags) and len(overlap_flags) > 0 :
             grid.value = word
             grid.isFilled = True
             self.crossWordGridDict[grid] = word
-            self.update_matrix()
+            return True
 
+        return False
 
     def get_possible_answers(self):
         # add list of grids to words
@@ -124,9 +132,6 @@ class CrossWordPuzzel():
                         self.matrix[i] = a + cwg.value[i-cwg.start] + b
 
 
-
-
-
 def crossWordPuzzel(grid, words):
     crossWordGrids = []
 
@@ -146,26 +151,31 @@ def crossWordPuzzel(grid, words):
     cwp.fill_unique_solutions()
 
     while sum([1 for cw in cwp.crossWordGridDict if cw.isFilled]) < len(words):
-        words_already_filled = [cwp.crossWordGridDict.get(cw, '') for cw in cwp.crossWordGridDict]
-        for ans in words:
-            if ans not in words_already_filled:
-                for grid in cwp.crossWordGridDict:
-                    cwp.solve_puzzle(grid, ans)
 
+        words_already_filled = [cwp.crossWordGridDict.get(cw, None) for cw in cwp.crossWordGridDict]
+        words_to_be_filled = [ ans for ans in words if ans not in words_already_filled][0]
 
+        for grid in cwp.crossWordGridDict:
+            cwp.solve_puzzle(grid, words_to_be_filled)
+
+    cwp.update_matrix()
     cwp.print_matrix()
     return cwp.matrix
 
 
 
-#grid = ['+-++++++++',  '+-++++++++', '+-++++++++', '+-----++++', '+-+++-++++', '+-+++-++++', '+++++-++++', '++------++', '+++++-++++', '+++++-++++']
-#answers = 'LONDON;DELHI;ICELAND;ANKARA'
+grid1 = ['+-++++++++',  '+-++++++++', '+-++++++++', '+-----++++', '+-+++-++++', '+-+++-++++', '+++++-++++', '++------++', '+++++-++++', '+++++-++++']
+answers1 = 'LONDON;DELHI;ICELAND;ANKARA'
 
-#grid = ['++++++-+++', '++------++', '++++++-+++', '++++++-+++', '+++------+', '++++++-+-+', '++++++-+-+', '++++++++-+', '++++++++-+', '++++++++-+']
-#answers = 'ICELAND;MEXICO;PANAMA;ALMATY'
+grid2 = ['++++++-+++', '++------++', '++++++-+++', '++++++-+++', '+++------+', '++++++-+-+', '++++++-+-+', '++++++++-+', '++++++++-+', '++++++++-+']
+answers2 = 'ICELAND;MEXICO;PANAMA;ALMATY'
 
-grid = ['+-++++++++', '+-++++++++', '+-------++', '+-++++++++', '+-++++++++', '+------+++', '+-+++-++++', '+++++-++++', '+++++-++++', '++++++++++']
-answers = 'AGRA;NORWAY;ENGLAND;GWALIOR'
+grid3 = ['+-++++++++', '+-++++++++', '+-------++', '+-++++++++', '+-++++++++', '+------+++', '+-+++-++++', '+++++-++++', '+++++-++++', '++++++++++']
+answers3 = 'AGRA;NORWAY;ENGLAND;GWALIOR'
 
+grid4 = [ '+-++++++++', '+-------++','+-++-+++++','+-------++','+-++-++++-','+-++-++++-','+-++------','+++++++++-','++++++++++','++++++++++']
+answers4 = 'ANDAMAN;MANIPUR;ICELAND;ALLEPY;YANGON;PUNE'
 
-print(crossWordPuzzel(grid, answers.split(';')))
+grid5 =['+-++++++++','+-++++++++','+-------++','+-++++++++','+-----++++','+-+++-++++','+++-----++','+++++-++++','+++++-++++','+++++-++++']
+answers5 = 'SYDNEY;TURKEY;DETROIT;EGYPT;PARIS'
+print(crossWordPuzzel(grid5, answers5.split(';')))
